@@ -5,11 +5,11 @@ use crate::commons::Solution;
 pub struct Day02;
 
 impl Solution for Day02 {
-    fn part1(input: Vec<String>) -> String {
+    fn part1(&self, input: &str) -> String {
         let available_cubes = [(12, "red"), (13, "green"), (14, "blue")];
         let mut result = 0; 
 
-        for line in input { 
+        for line in input.lines() { 
             let mut is_valid = true;
 
             let mut record = line.split(":");
@@ -42,10 +42,10 @@ impl Solution for Day02 {
         return result.to_string();
     }
 
-    fn part2(input: Vec<String>) -> String {
+    fn part2(&self, input: &str) -> String {
         let mut result = 0; 
         
-        for line in input { 
+        for line in input.lines() { 
             let mut minimal_cubes = HashMap::from([
                 ("blue", 0),
                 ("red", 0),
@@ -85,21 +85,13 @@ mod tests {
 
     #[test]
     fn first_part() {
-        let mut input_lines: Vec<String> = vec![];
-        PUZZLE_INPUT.lines()
-            .for_each(|x| input_lines.extend_from_slice(&[x.to_string()]));
-
-        let result = super::Day02::part1(input_lines);
+        let result = super::Day02.part1(PUZZLE_INPUT);
         assert_eq!(result, "8");
     }
 
     #[test]
     fn second_part() {
-        let mut input_lines: Vec<String> = vec![];
-        PUZZLE_INPUT.lines()
-            .for_each(|x| input_lines.extend_from_slice(&[x.to_string()]));
-
-        let result = super::Day02::part2(input_lines);
+        let result = super::Day02.part2(PUZZLE_INPUT);
         assert_eq!(result, "2286");
     }
 }
