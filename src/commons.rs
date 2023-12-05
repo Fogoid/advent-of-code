@@ -19,3 +19,8 @@ pub fn read_file_to_lines(file_path: &String) -> Vec<String> {
 
     return lines; 
 }
+
+pub trait Solution {
+    fn part1(input: Vec<String>) -> String; 
+    fn part2(input: Vec<String>) -> String; 
+}

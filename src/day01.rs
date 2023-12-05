@@ -1,68 +1,75 @@
 use std::vec;
 
-pub fn part1(input_lines: Vec<String>) -> u32 {
-    let mut result = 0;
+use crate::commons::Solution;
 
-    for line in input_lines {
-        let mut numeric_chars = line.chars().filter_map(|x| x.to_digit(10));
-        let first = numeric_chars.next().unwrap();
-        let last = numeric_chars.last().unwrap_or(first);
+pub struct Day01;
 
-        result += (10 * first) + last;
-    }
-
-    return result;
-}
-
-pub fn part2(input_lines: Vec<String>) -> u32 {
-    let digits: Vec<&str> = vec![
-        "one", "two", "three", "four", "five", "six", "seven", "eight", "nine",
-    ];
-
-    let update = |mut first: Option<u32>, val: u32| {
-        first = first.or(Some(val));
-
-        return (first, val);
-    };
-
-    let mut result: u32 = 0;
+impl Solution for Day01 {
+    fn part1(input_lines: Vec<String>) -> String {
+        let mut result = 0;
     
-    for line in input_lines {
-        let mut first: Option<u32> = None;
-        let mut last: u32 = 0;
-        let mut illegal_until: i32 = -1;
-
-        for (i, c) in line.chars().enumerate() {
-            if illegal_until >= i as i32 {
-                continue;
-            }
-
-            if let Some(d) = c.to_digit(10) {
-                (first, last) = update(first, d);
-                continue;
-            }
-
-            let word_digit = digits.iter()
-                .enumerate() 
-                .find(|(i, word)| {
-                    println!("word {}", **word);
-                    line[(*i)..].starts_with(**word)
-            }); 
-            if let Some((j, w)) = word_digit {
-                (first, last) = update(first, (j+1) as u32);
-                illegal_until = (i + (*w).len()) as i32;
-            }
-        };
-        
-        result += (10 * first.unwrap()) + last;
+        for line in input_lines {
+            let mut numeric_chars = line.chars().filter_map(|x| x.to_digit(10));
+            let first = numeric_chars.next().unwrap();
+            let last = numeric_chars.last().unwrap_or(first);
+    
+            result += (10 * first) + last;
+        }
+    
+        return result.to_string();
     }
-
-    return result;
+    
+    fn part2(input_lines: Vec<String>) -> String {
+        let digits: Vec<&str> = vec![
+            "one", "two", "three", "four", "five", "six", "seven", "eight", "nine",
+        ];
+    
+        let update = |mut first: Option<u32>, val: u32| {
+            first = first.or(Some(val));
+    
+            return (first, val);
+        };
+    
+        let mut result: u32 = 0;
+        
+        for line in input_lines {
+            let mut first: Option<u32> = None;
+            let mut last: u32 = 0;
+            let mut illegal_until: i32 = -1;
+    
+            for (i, c) in line.chars().enumerate() {
+                if illegal_until >= i as i32 {
+                    continue;
+                }
+    
+                if let Some(d) = c.to_digit(10) {
+                    (first, last) = update(first, d);
+                    continue;
+                }
+    
+                let word_digit = digits.iter()
+                    .enumerate() 
+                    .find(|(i, word)| {
+                        line[(*i)..].starts_with(**word)
+                }); 
+                if let Some((j, w)) = word_digit {
+                    (first, last) = update(first, (j+1) as u32);
+                    illegal_until = (i + (*w).len()) as i32;
+                }
+            };
+            
+            result += (10 * first.unwrap()) + last;
+        }
+    
+        return result.to_string();
+    }
 }
+
 
 #[cfg(test)]
 mod tests {
     use indoc::indoc;
+    use crate::commons::Solution;
 
     #[test]
     fn first_part() {
@@ -76,8 +83,8 @@ mod tests {
             .lines()
             .for_each(|x| input_lines.extend_from_slice(&[x.to_string()]));
 
-        let result = super::part1(input_lines);
-        assert_eq!(result, 142);
+        let result = super::Day01::part1(input_lines);
+        assert_eq!(result, "142");
     }
 
     #[test]
@@ -95,7 +102,7 @@ mod tests {
             .lines()
             .for_each(|x| input_lines.extend_from_slice(&[x.to_string()]));
 
-        let result = super::part2(input_lines);
-        assert_eq!(result, 281);
+        let result = super::Day01::part2(input_lines);
+        assert_eq!(result, "281");
     }
 }
