@@ -6,34 +6,29 @@ pub struct Day02;
 
 impl Solution for Day02 {
     fn part1(&self, input: &str) -> String {
-        let available_cubes = [(12, "red"), (13, "green"), (14, "blue")];
+        let available_cubes: HashMap<&str, i32> = HashMap::from([
+            ("red", 12),
+            ("green", 13),
+            ("blue", 14),
+        ]);
         let mut result = 0; 
 
         for line in input.lines() { 
-            let mut is_valid = true;
-
             let mut record = line.split(":");
             let game_id: i32 = record.next().unwrap()
                 .split(" ").last().unwrap()
                 .parse().unwrap();
-            let game_record = record.next().unwrap().trim_start();
-            let rounds = game_record.split(";");
-            for round in rounds {
-                for cube in round.trim_start().split(",") {
-                    let mut cube = cube.trim_start().split(" ");
-                    let taken = (cube.next().unwrap().parse::<i32>().unwrap(),
-                        cube.next().unwrap()); 
-                    is_valid = available_cubes.iter()
-                        .any(|(n, color)| (*color).eq(taken.1) && (*n) >= taken.0);
-                    if !is_valid {
-                        break;
-                    }
-                };
 
-                if !is_valid {
-                    break;
-                }
-            }
+            let game_rounds = record.next().unwrap().trim_start();
+            let is_valid = game_rounds.split(";").map(|round| {
+                return round.trim_start().split(",")
+                    .map(|cube| {
+                        let mut c = cube.trim_start().split(" ");
+                        let n = c.next().unwrap().parse::<i32>().unwrap();
+                        let color = c.next().unwrap();
+                        (color, n)
+                    }).all(|(color, n)| *available_cubes.get(color).unwrap() >= n); 
+            }).all(|round| round);
 
             if is_valid {
                 result += game_id; 
