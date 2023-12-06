@@ -1,8 +1,10 @@
-use std::vec;
-
 use crate::commons::Solution;
 
 pub struct Day01;
+
+pub const DIGITS: [&str; 9] = [
+    "one", "two", "three", "four", "five", "six", "seven", "eight", "nine",
+];
 
 impl Solution for Day01 {
     fn part1(&self, input: &str) -> String {
@@ -20,10 +22,6 @@ impl Solution for Day01 {
     }
     
     fn part2(&self, input: &str) -> String {
-        let digits: Vec<&str> = vec![
-            "one", "two", "three", "four", "five", "six", "seven", "eight", "nine",
-        ];
-    
         let update = |mut first: Option<u32>, val: u32| {
             first = first.or(Some(val));
     
@@ -35,26 +33,20 @@ impl Solution for Day01 {
         for line in input.lines() {
             let mut first: Option<u32> = None;
             let mut last: u32 = 0;
-            let mut illegal_until: i32 = -1;
     
             for (i, c) in line.chars().enumerate() {
-                if illegal_until >= i as i32 {
-                    continue;
-                }
-    
                 if let Some(d) = c.to_digit(10) {
                     (first, last) = update(first, d);
                     continue;
                 }
-    
-                let word_digit = digits.iter()
+
+                let word_digit = DIGITS.iter()
                     .enumerate() 
-                    .find(|(i, word)| {
-                        line[(*i)..].starts_with(**word)
+                    .find(|(_, word)| {
+                        line[i..].starts_with(**word)
                 }); 
-                if let Some((j, w)) = word_digit {
+                if let Some((j, _)) = word_digit {
                     (first, last) = update(first, (j+1) as u32);
-                    illegal_until = (i + (*w).len()) as i32;
                 }
             };
             
