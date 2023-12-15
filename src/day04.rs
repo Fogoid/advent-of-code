@@ -21,14 +21,13 @@ impl Solution for Day04 {
             let winning: Vec<i32> = Day04::map_filter_numbers(winning);
             let mine: Vec<i32> = Day04::map_filter_numbers(mine);
 
-            let mut exponent: u32 = 0;
-            winning.into_iter()
+            let exponent: usize = winning.into_iter()
                 .filter(|w| mine.contains(w))
-                .for_each(|_| exponent = exponent + 1);
+                .count();
 
             match exponent {
                 0 => None,
-                x => Some(2_i32.pow(x - 1))
+                x => Some(2_i32.pow(x as u32 - 1))
             }
         }).sum();
 
@@ -36,7 +35,29 @@ impl Solution for Day04 {
     }
 
     fn part2(&self, input: &str) -> String {
-        return input.to_string();
+        let mut lines_counter: Vec<(usize, &str)> = input.lines().map(|line| (1, line)).collect();
+
+        let mut res = 0;
+        for i in 0..lines_counter.len() {
+            let line_counter = lines_counter.get_mut(i).unwrap();
+            res = res + line_counter.0;
+            
+            let (_, line) = line_counter.1.split_once(":").unwrap();
+
+            let (winning, mine) = line.split_once("|").unwrap();
+            let winning: Vec<i32> = Day04::map_filter_numbers(winning);
+            let mine: Vec<i32> = Day04::map_filter_numbers(mine);
+
+            let matches: usize = winning.into_iter()
+                .filter(|w| mine.contains(w))
+                .count();
+            
+            for j in 0..matches {
+                lines_counter.get_mut(i+j+1).unwrap().0 += lines_counter.get_mut(i).unwrap().0;
+            }
+        }
+
+        res.to_string()
     }
 }
 
@@ -59,5 +80,11 @@ mod tests {
     fn part_one_test() {
         let result = super::Day04.part1(PUZZLE_INPUT);
         assert_eq!(result, "13");
+    }
+
+    #[test]
+    fn part_two_test() {
+        let result = super::Day04.part2(PUZZLE_INPUT);
+        assert_eq!(result, "30");
     }
 }
